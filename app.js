@@ -33,15 +33,23 @@ fileInput.addEventListener('change', async (e) => {
 
     // Draw bounding boxes and labels
     data.words.forEach(word => {
-      const { x, y, width, height } = word.bbox;
-      ctx.strokeStyle = getColorForWord(word.text);
-      ctx.lineWidth = 2;
-      ctx.strokeRect(x, y, width, height);
-
-      ctx.fillStyle = ctx.strokeStyle; // Same color as box
-      ctx.font = '14px Arial';
-      ctx.fillText(word.text, x, y - 5);
+      const bbox = word.bbox;
+      if (bbox) {
+        const x = bbox.x0 || bbox.x || 0;
+        const y = bbox.y0 || bbox.y || 0;
+        const width = (bbox.x1 && bbox.x0) ? (bbox.x1 - bbox.x0) : (bbox.width || 0);
+        const height = (bbox.y1 && bbox.y0) ? (bbox.y1 - bbox.y0) : (bbox.height || 0);
+    
+        ctx.strokeStyle = getColorForWord(word.text);
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x, y, width, height);
+    
+        ctx.fillStyle = ctx.strokeStyle;
+        ctx.font = '14px Arial';
+        ctx.fillText(word.text, x, y - 5);
+      }
     });
+    
 
     console.log('Grouped Fields:', fields);
   };
