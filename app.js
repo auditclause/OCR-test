@@ -1,3 +1,5 @@
+// tested with an Attendance On Demand timesheet example
+
 const fileInput = document.getElementById('fileInput');
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -58,16 +60,16 @@ fileInput.addEventListener('change', async (e) => {
 // Function to group fields based on keywords
 function groupFieldsByKeywords(words) {
   const groupedFields = {
-    phoneNumbers: [],
-    addresses: [],
+    shiftDates: [],
+    punches: [],
   };
 
   words.forEach(word => {
     const text = word.text.toLowerCase(); // normalize
-    if (text.includes('phone')) {
-      groupedFields.phoneNumbers.push(word);
-    } else if (text.includes('address')) {
-      groupedFields.addresses.push(word);
+    if (text.includes('Sun Jul-14 24')) {
+      groupedFields.shiftDates.push(word);
+    } else if (text.includes('10:44p')) {
+      groupedFields.punches.push(word);
     }
   });
 
@@ -77,9 +79,9 @@ function groupFieldsByKeywords(words) {
 // Function to set color based on keyword
 function getColorForWord(text) {
   const lowerText = text.toLowerCase();
-  if (lowerText.includes('phone')) {
+  if (lowerText.includes('Sun Jul-14 24')) {
     return 'green';
-  } else if (lowerText.includes('address')) {
+  } else if (lowerText.includes('10:44p')) {
     return 'blue';
   } else {
     return 'red'; // default color for everything else
