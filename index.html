@@ -1,33 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OCR Simple App</title>
   <style>
-    #canvasContainer {
-      position: relative; /* Important: so children can be absolutely positioned */
-      display: inline-block;
-    }
-    #canvas {
-      border: 1px solid black;
-    }
-    .ocr-input {
-      position: absolute;
-      font-size: 10px;
-      border: 1px solid blue;
-      background-color: rgba(255, 255, 255, 0.7);
-      padding: 2px;
+    canvas { 
+      border: 1px solid black; 
+      max-width: 100%; 
+      height: auto;
     }
   </style>
 </head>
 <body>
-  <input type="file" id="imageUpload" />
-  <button onclick="startOCR()">Read Text</button>
-  <div id="output"></div>
+  <h1>OCR Field Grouping</h1>
   
-  <div id="canvasContainer">
-    <canvas id="canvas"></canvas> <!-- canvas inside container -->
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.1/dist/tesseract.min.js"></script>
-  <script src="main.js"></script>
+  <input type="file" id="fileInput" />
+  <br><br>
+  <canvas id="canvas"></canvas>
+  
+  <script src="https://unpkg.com/tesseract.js@v5.0.3/dist/tesseract.min.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
