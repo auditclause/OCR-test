@@ -2,7 +2,12 @@ function startOCR() {
   const imageInput = document.getElementById("imageUpload");
   const outputDiv = document.getElementById("output");
   const canvas = document.getElementById("canvas");
+  const container = document.getElementById("canvasContainer");
   const ctx = canvas.getContext("2d");
+
+  // Clear previous inputs
+  const oldInputs = container.querySelectorAll(".ocr-input");
+  oldInputs.forEach(input => input.remove());
 
   if (imageInput.files.length === 0) {
     outputDiv.innerText = "Please select an image first.";
@@ -24,14 +29,10 @@ function startOCR() {
       { logger: (m) => console.log(m) }
     )
     .then(({ data }) => {
-      outputDiv.innerHTML = ""; // Clear previous results
+      outputDiv.innerHTML = ""; // Clear any previous messages
 
       ctx.strokeStyle = "red";
       ctx.lineWidth = 2;
-
-      // Create a form to hold editable words
-      const form = document.createElement("form");
-      form.id = "ocrForm";
 
       data.words.forEach((word, index) => {
         const { x0, y0, x1, y1 } = word.bbox;
@@ -41,21 +42,23 @@ function startOCR() {
         ctx.fillStyle = "blue";
         ctx.fillText(word.text, x0, y0 - 2);
 
-        // Create an input for each word
+        // Create an input positioned at the word location
         const input = document.createElement("input");
         input.type = "text";
-        input.name = `word-${index}`;
         input.value = word.text;
-        input.style.margin = "5px";
+        input.className = "ocr-input";
 
-        form.appendChild(input);
+        // Position the input box over the word bounding box
+        input.style.left = `${x0}px`;
+        input.style.top = `${y0}px`;
+        input.style.width = `${x1 - x0}px`;
+        input.style.height = `${y1 - y0}px`;
+
+        container.appendChild(input);
       });
 
-      outputDiv.appendChild(form);
-
-      // Optional: add a Save button
+      // Optional: Add a save button
       const saveButton = document.createElement("button");
-      saveButton.type = "button";
       saveButton.innerText = "Save Corrected Text";
       saveButton.onclick = saveCorrectedText;
       outputDiv.appendChild(saveButton);
@@ -66,12 +69,21 @@ function startOCR() {
   };
 }
 
-// This function gathers corrected words
 function saveCorrectedText() {
-  const form = document.getElementById("ocrForm");
-  const inputs = form.querySelectorAll("input");
+  const inputs = document.querySelectorAll(".ocr-input");
   const correctedText = Array.from(inputs).map(input => input.value).join(" ");
+
+  // Create a Blob (binary large object) with the corrected text
+  const blob = new Blob([correctedText], { type: "text/plain" });
   
-  console.log("Corrected Text:", correctedText);
-  alert("Corrected Text:\n" + correctedText); // You could also display/save it
+  // Create a temporary link element
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "corrected_text.txt"; // file name for download
+
+  // Trigger the download
+  link.click();
+
+  // Clean up the URL object
+  URL.revokeObjectURL(link.href);
 }
